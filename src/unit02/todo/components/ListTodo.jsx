@@ -1,5 +1,6 @@
 import { Row, Col, List, Checkbox } from 'antd';
-import { DeleteFilled } from '@ant-design/icons'
+import { DeleteFilled } from '@ant-design/icons';
+import PropTypes from 'prop-types';
 
 const ListTodo = (props) => {
     return (
@@ -38,6 +39,13 @@ const ListTodo = (props) => {
             </Row>
         </>
     )
+}
+
+// Khai bao dinh nghia: kieu du lieu truyen vao cho props cua component
+ListTodo.propTypes = {
+    data: PropTypes.array.isRequired,
+    remove: PropTypes.func.isRequired,
+    finish: PropTypes.func.isRequired
 }
 
 export default ListTodo
