@@ -1,7 +1,7 @@
 import { ADD_TODO, CHANGE_NAME_TODO } from "../actions/todo";
 
 const iniState = {
-    nameTodo: null,
+    nameTodo: '',
     listData: [],
     idTodo: 1
 }
@@ -23,7 +23,7 @@ export const todoReducer = (state = iniState, action) => {
                         id: state.idTodo,
                         done: false
                     }],
-                    name: null
+                    name: ''
                 }
             }
         default:
