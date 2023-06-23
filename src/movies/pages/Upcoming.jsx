@@ -21,7 +21,7 @@ const UpcomingMovies = () => {
     let nextDay = moment(currentDate, "YYYY-MM-DD").add(1, 'days').format("YYYY-MM-DD");
     let nextMonth = moment(currentDate, "YYYY-MM-DD").add(7, 'days').format("YYYY-MM-DD");
 
-    console.log(nextDay, nextMonth);
+    // console.log(nextDay, nextMonth);
 
     const [loading, setLoading] = useState(false);
     const [dataMovies, setDataMovies] = useState([]);

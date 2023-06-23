@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import LayoutMovies from '../components/Layout';
 import { Row, Col, Image, Typography, Skeleton, Button } from "antd";
-import { useParams } from "react-router-dom";
+import { HeartFilled, FrownFilled } from '@ant-design/icons';
+import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { helpers } from "../helpers";
 import YouTube from 'react-youtube';
+import { useAuth } from "../hooks/useAuth";
 
 // import ModalVideo from 'react-modal-video';
 // import 'react-modal-video/css/modal-video.min.css';
@@ -16,7 +18,11 @@ const DetailMovies = () => {
     const [loading, setLoading] = useState(true);
     const [movie, setMovie] = useState({});
     const [error, setError] = useState(null);
+    const [favorite, setFavorite] = useState(helpers.checkDataMoviesLocalStorage(id))
     // const [isOpen, setOpen] = useState(false);
+    const { user } = useAuth(); // lay thong tin cua nguoi dung da dang nhap va duoc luu trong localstorage
+
+    const navigate = useNavigate();
 
     const opts = {
         height: '320',
@@ -29,6 +35,28 @@ const DetailMovies = () => {
 
     const onPlayerReady = (event) => {
         event.target.pauseVideo();
+    }
+
+    const addMovie = () => {
+        if (!user) {
+            // chua dang nhap
+            alert('Ban chua dang nhap')
+            navigate('/login');
+        } else {
+            // luu thong tin cua bo phim vao localstorage
+            // console.log('movie', movie);
+            helpers.addDataMovieToLocalStorage(movie);
+            setFavorite(true);
+        }
+    }
+
+    const removeMovie = (idMovie) => {
+        if (!user) {
+            navigate('/login');
+        } else {
+            helpers.removeMovieLocalStorageById(idMovie);
+            setFavorite(false);
+        }
     }
 
     useEffect(() => {
@@ -76,27 +104,46 @@ const DetailMovies = () => {
             level3={slug}
         >
             <Row
-            // style={{
-            //     backgroundImage: `url(https://image.tmdb.org/t/p/w500/${movie.backdrop_path})`,
-            //     backgroundRepeat: 'no-repeat',
-            //     backgroundRepeat: 'cover',
-
-            // }}
             >
                 <Col span={24}>
                     <h4>Movie detail</h4>
                     <Row>
                         <Col span={8}>
                             <div style={{ padding: '10px' }}>
-                                <Image src={`https://image.tmdb.org/t/p/w300/${movie.poster_path}`} />
+                                <Image src={`https://image.tmdb.org/t/p/w400/${movie.poster_path}`} />
                                 <Typography>
-                                    <Title style={{ fontSize: '24px' }}>
+                                    <Title style={{ fontSize: '24px', textAlign: 'center', marginRight: '40px' }}>
                                         {movie.original_title}
                                     </Title>
                                 </Typography>
+
+                                {
+                                    favorite ?
+                                        (
+                                            <Button
+                                                danger
+                                                onClick={() => removeMovie(id)}
+                                            >
+                                                <FrownFilled style={{ color: 'hotpink' }} />
+                                                Bo thich
+                                            </Button>
+                                        )
+                                        :
+                                        (
+                                            <Button
+                                                danger
+                                                onClick={() => addMovie()}
+                                            >
+                                                <HeartFilled style={{ color: 'hotpink' }} />
+                                                Yeu thich
+                                            </Button>
+                                        )
+
+                                }
+
                             </div>
                         </Col>
-                        <Col span={8}>
+                        <Col span={8} style={{ padding: '10px' }}>
                             <h3>Noi dung</h3>
                             <Typography>
                                 <Paragraph>
@@ -129,6 +176,7 @@ const DetailMovies = () => {
                                     ))
                                 }
                             </div> */}
+                            {/*                             
                             {
                                 movie['videos']['results'].map((item, index) => (
                                     <div key={index} style={{ marginBottom: '5px' }}>
@@ -139,16 +187,15 @@ const DetailMovies = () => {
                                         />
                                     </div>
                                 ))
-                            }
+                            } */}
 
                         </Col>
                         <Col span={8} style={{ padding: '10px' }}>
-                            <h5>Images Movie</h5>
+                            <h3>Images Movie</h3>
                             {
                                 movie['images']['backdrops'].map((item, index) => (
                                     <div key={index} style={{ marginBottom: '5px' }}>
-                                        <Image src={`https://image.tmdb.org/t/p/w300/${item.file_path}`} />
-
+                                        <Image src={`https://image.tmdb.org/t/p/w400/${item.file_path}`} />
                                     </div>
                                 ))
                             }
@@ -156,7 +203,6 @@ const DetailMovies = () => {
                     </Row>
                 </Col>
             </Row>
-
         </LayoutMovies>
     )
 }
